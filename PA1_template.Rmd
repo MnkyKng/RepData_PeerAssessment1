@@ -7,8 +7,23 @@ output:
 
 
 ## Loading and preprocessing the data
+```{r echo=TRUE}
+dataset <- "activity.csv"
 
+dataset_folder <- if (!file.exists("activity.csv")){
+        unzip("activity.zip")
+}
 
+dataset <- read.csv("activity.csv")
+dim(dataset)
+
+head(dataset)
+mean(is.na(dataset))
+
+library(dplyr)
+filtered_dataset <- dataset %>% filter(!is.na(steps))
+str(filtered_dataset)
+```
 
 ## What is mean total number of steps taken per day?
 
