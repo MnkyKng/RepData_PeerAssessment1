@@ -19,15 +19,32 @@ dim(dataset)
 
 head(dataset)
 mean(is.na(dataset))
+```
 
+### remove NA values from dataset
+```{r echo=TRUE}
 library(dplyr)
 filtered_dataset <- dataset %>% filter(!is.na(steps))
 str(filtered_dataset)
 ```
 
 ## What is mean total number of steps taken per day?
+### Total number of steps taken per day
+```{r echo=TRUE}
+filtered_dataset$date <- as.Date(filtered_dataset$date)
+str(filtered_dataset)
 
+steps_per_day <- filtered_dataset %>% group_by(date) %>% summarise(sum(steps)) %>% rename(total_steps='sum(steps)')
+head(steps_per_day)
+```
 
+### Histogram steps_per_day (total_steps per day)
+```{r echo=TRUE}
+library(ggplot2)
+
+g <- ggplot(steps_per_day, aes(date))
+g+geom_histogram()
+```
 
 ## What is the average daily activity pattern?
 

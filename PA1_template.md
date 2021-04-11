@@ -45,6 +45,8 @@ mean(is.na(dataset))
 ## [1] 0.04371585
 ```
 
+### remove NA values from dataset
+
 ```r
 library(dplyr)
 ```
@@ -79,8 +81,51 @@ str(filtered_dataset)
 ```
 
 ## What is mean total number of steps taken per day?
+### Total number of steps taken per day
 
+```r
+filtered_dataset$date <- as.Date(filtered_dataset$date)
+str(filtered_dataset)
+```
 
+```
+## 'data.frame':	15264 obs. of  3 variables:
+##  $ steps   : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ date    : Date, format: "2012-10-02" "2012-10-02" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+```
+
+```r
+steps_per_day <- filtered_dataset %>% group_by(date) %>% summarise(sum(steps)) %>% rename(total_steps='sum(steps)')
+head(steps_per_day)
+```
+
+```
+## # A tibble: 6 x 2
+##   date       total_steps
+##   <date>           <int>
+## 1 2012-10-02         126
+## 2 2012-10-03       11352
+## 3 2012-10-04       12116
+## 4 2012-10-05       13294
+## 5 2012-10-06       15420
+## 6 2012-10-07       11015
+```
+
+### Histogram steps_per_day (total)
+
+```r
+library(ggplot2)
+
+g <- ggplot(steps_per_day, aes(date))
+g+geom_histogram()
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ## What is the average daily activity pattern?
 
