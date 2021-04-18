@@ -180,7 +180,7 @@ summary(df_iavg)
 ```
 
 ```r
-with(df_iavg, plot(interval, avg, type = "l", xlab = "5-minute interval", ylab = "Average number of steps"))
+with(df_iavg, plot(interval, avg, type = "l", main = "Average number of steps taken, averaged across all days", xlab = "Interval", ylab = "Average number of steps"))
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
@@ -214,8 +214,8 @@ summary(is.na(dataset))
 ```
 Our dataset contains 2304 total missing values (NA's).
 
-2. Filling in all of the missing values in the dataset,   
-3. and creating a new dataset:   
+2. Filling in of all the missing values in the dataset,   
+3. and creation of a new dataset:   
 
 ```r
 library(tidyr)
@@ -304,3 +304,45 @@ Due to the number of new values (NA's have been replaced with 0, not removed), o
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+1. Creation of a factor variable with two levels indicating a "weekday" or a "weekend":  
+
+```r
+new_dataset$datetype <- sapply(new_dataset$date, function(x){
+        if(weekdays(x) == "Saturday" | weekdays(x)=="Sunday"){
+                datetype <- "weekend"
+        } else {
+                datetype <- "weekday"
+        }
+})
+head(new_dataset)
+```
+
+```
+##   steps       date interval datetype
+## 1     0 2012-10-01        0  weekday
+## 2     0 2012-10-01        5  weekday
+## 3     0 2012-10-01       10  weekday
+## 4     0 2012-10-01       15  weekday
+## 5     0 2012-10-01       20  weekday
+## 6     0 2012-10-01       25  weekday
+```
+
+```r
+summary(new_dataset$datetype=="weekend")
+```
+
+```
+##    Mode   FALSE    TRUE 
+## logical   12960    4608
+```
+We have a total amount of 12960 weekdays and 4608 weekends.
+
+2. Time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday or weekend (y-axis):  
+
+```r
+aggregated_data <- aggregate(steps~interval + datetype, new_dataset, mean)
+g <- ggplot(aggregated_data, aes(x=interval, y=steps, color=datetype))
+g+geom_line()+facet_wrap(~datetype, nrow = 2, ncol = 1)+ggtitle("Average number of steps taken per day by type of date")+xlab("Interval")+ylab("Average number of steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
